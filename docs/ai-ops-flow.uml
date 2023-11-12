@@ -1,0 +1,73 @@
+@startuml
+
+title AI OPS Flow 类图
+
+package "AI Engine" {
+  class "OPSFlow" {
+    * id: string
+    * name: string
+    * description: string
+    * steps: list<Step>
+
+    + create()
+    + update()
+    + delete()
+    + generate()
+    + deploy()
+    + monitor()
+  }
+
+  class "Step" {
+    * id: string
+    * name: string
+    * description: string
+    * action: string
+    * input: map<string, any>
+    * output: map<string, any>
+
+    + execute()
+  }
+
+  class "LangChain" {
+    + generate(OPSFlow): string
+  }
+
+  class "Ollama" {
+    + deploy(OPSFlow): string
+  }
+
+  class "IaC" {
+    * type: string
+    * provider: string
+    * region: string
+    * account: string
+
+    + create(resource: map<string, any>): string
+    + update(resource: map<string, any>): string
+    + delete(resource: map<string, any>): string
+  }
+
+  class "ML" {
+    * type: string
+    * framework: string
+
+    + train(data: map<string, any>): string
+    + deploy(model: map<string, any>): string
+  }
+
+  class "Monitor" {
+    * type: string
+    * tool: string
+
+    + monitor(resource: map<string, any>): string
+  }
+
+  OPSFlow "1" o-- "n" Step
+  OPSFlow "1" o-- LangChain
+  OPSFlow "1" o-- Ollama
+  OPSFlow "1" o-- IaC
+  OPSFlow "1" o-- ML
+  OPSFlow "1" o-- Monitor
+}
+
+@enduml
