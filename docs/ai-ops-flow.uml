@@ -1,6 +1,6 @@
 @startuml
 
-title AI OPS Flow 类图
+title AI Engine 数据源设计
 
 package "AI Engine" {
   class "OPSFlow" {
@@ -62,12 +62,56 @@ package "AI Engine" {
     + monitor(resource: map<string, any>): string
   }
 
+  class "Clickhouse" {
+    * host: string
+    * port: string
+    * database: string
+
+    + insert(data: list<map<string, any>>): string
+    + select(query: string): list<map<string, any>>
+  }
+
+  class "Neo4j" {
+    * host: string
+    * port: string
+    * database: string
+
+    + createNode(node: map<string, any>): string
+    + createRelationship(relationship: map<string, any>): string
+    + query(query: string): list<map<string, any>>
+  }
+
+  class "VectorDB" {
+    * host: string
+    * port: string
+    * database: string
+
+    + insert(data: list<map<string, any>>): string
+    + select(query: string): list<map<string, any>>
+  }
+
   OPSFlow "1" o-- "n" Step
   OPSFlow "1" o-- LangChain
   OPSFlow "1" o-- Ollama
   OPSFlow "1" o-- IaC
   OPSFlow "1" o-- ML
   OPSFlow "1" o-- Monitor
+
+  OPSFlow "1" o-- Clickhouse
+  OPSFlow "1" o-- Neo4j
+  OPSFlow "1" o-- VectorDB
+
+  Clickhouse "1" o-- "n" LongTermMemory
+  Neo4j "1" o-- "n" LongTermMemory
+  VectorDB "1" o-- "n" LongTermMemory
+
+ class "LongTermMemory" {
+    * type: string
+    * content: string
+
+    + constructor(type: string, content: string)
+  }
+
 }
 
 @enduml
